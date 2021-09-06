@@ -3,7 +3,9 @@ rpz\_rmark
 
 -   [Initialisation](#initialisation)
 -   [Importation des données](#importation-des-données)
+-   [SPA dans le monde](#spa-dans-le-monde)
 -   [Cartes de base](#cartes-de-base)
+-   [Carte bathymétrique de la ZEE](#carte-bathymétrique-de-la-zee)
 -   [Carte des clusters par monts
     sous-marins](#carte-des-clusters-par-monts-sous-marins)
 -   [Cartes en relief](#cartes-en-relief)
@@ -100,6 +102,43 @@ catch_op_peche = readRDS('./modified_data/catch_op_peche.rds')
 
 <br/> <br/>
 
+# SPA dans le monde
+
+Cette première carte représente la position de la ZEE de SPA dans le
+monde. Pour charger ue carte du monde simple, on utilise ici le package
+*maps*.
+
+``` r
+library(maps)
+```
+
+    ## Warning: package 'maps' was built under R version 4.0.5
+
+``` r
+world_map <- map_data("world")
+
+#les continents:
+ggplot(world_map, aes(x = long, y = lat, group = group)) +
+  geom_polygon(fill="lightgray") + 
+  xlim(0, 130)+ ylim(-69, 32) +
+#la ZEE:
+  geom_sf(
+       data = EEZ_sf[which(EEZ_sf$Country == 'Amsterdam Island and Saint Paul Island'),],
+       fill = "transparent",
+       inherit.aes = F,
+       size = 0.5,
+       color = '#ff8c00'
+     ) +
+#les iles: 
+  geom_sf(data = FR_island_sf ,
+          color = "gray",
+          inherit.aes = F) +
+  
+  theme_void()
+```
+
+![](rpz_rmark_files/figure-gfm/unnamed-chunk-2-1.png)<!-- --> <br/>
+
 # Cartes de base
 
 Les cartes sont réalisées en les empilant couche par couche. La carte de
@@ -119,11 +158,11 @@ standard.map <- ggplot() +
 
 <br/>
 
-La deuxième couche représente:  
+La deuxième couche, *classic.map*, représente:  
 - Les limites de la réserve naturelle,  
 - Les isobaths,  
 - Les 2 îles,  
-- La rose des vents:
+- La rose des vents (facultatif):
 
 ``` r
 classic.map <- standard.map +
@@ -139,31 +178,25 @@ classic.map <- standard.map +
 
   # Gebco bathymetry, avec des couleurs plus ou moins foncees:
   geom_sf(
-    data = Isobath_SPA_large_sf  %>% dplyr::filter(level %in% c("-500")),
-    colour = "black",
-    inherit.aes = F,
-    size = 0.5
-  ) +
-  geom_sf(
     data = Isobath_SPA_large_sf  %>% dplyr::filter(level %in% c("-1000")),
     colour = "grey20",
     inherit.aes = F,
     size = 0.5
   ) +
   geom_sf(
-    data = Isobath_SPA_large_sf  %>% dplyr::filter(level %in% c("-1500")),
+    data = Isobath_SPA_large_sf  %>% dplyr::filter(level %in% c("-2000")),
     colour = "grey40",
     inherit.aes = F,
     size = 0.5
   ) +
   geom_sf(
-    data = Isobath_SPA_large_sf  %>% dplyr::filter(level %in% c("-2500")),
+    data = Isobath_SPA_large_sf  %>% dplyr::filter(level %in% c("-3000")),
     colour = "grey60",
     inherit.aes = F,
     size = 0.5
   ) +
   geom_sf(
-    data = Isobath_SPA_large_sf  %>% dplyr::filter(level %in% c("-3500")),
+    data = Isobath_SPA_large_sf  %>% dplyr::filter(level %in% c("-4000")),
     colour = "grey80",
     inherit.aes = F,
     size = 0.5
@@ -172,24 +205,24 @@ classic.map <- standard.map +
   # limite des iles:
   geom_sf(data = FR_island_sf ,
           fill = "black",
-          inherit.aes = F) +
+          inherit.aes = F)
   
   # Fleche d'orientation:
-  annotation_north_arrow(
-    location = "tl", #top left
-    #longueur, largeur:
-    height = unit(0.5, "in"),
-    width = unit(0.5, "in"),
-    #décalage par rapport a la bordure:
-    pad_x = unit(0.1, "in"),
-    pad_y = unit(0.1, "in"),
-    style = north_arrow_fancy_orienteering
-  ) 
+  # + annotation_north_arrow(
+  #   location = "tl", #top left
+  #     #longueur, largeur:
+  #   height = unit(0.5, "in"),
+  #   width = unit(0.5, "in"),
+  #     #décalage par rapport a la bordure:
+  #   pad_x = unit(0.1, "in"),
+  #   pad_y = unit(0.1, "in"),
+  #   style = north_arrow_fancy_orienteering
+  #) 
 
 classic.map
 ```
 
-![](rpz_rmark_files/figure-gfm/unnamed-chunk-3-1.png)<!-- --> <br/>
+![](rpz_rmark_files/figure-gfm/unnamed-chunk-4-1.png)<!-- --> <br/>
 
 Cette carte classique peut être aggrémentée du nom des monts légendés.
 C’est une carte que je n’ai pas vraiment utilisée, pour la faire au
@@ -197,17 +230,80 @@ mieux,, il faudrait un peu déplacer les noms des monts pour que ce soit
 plus clair, chose que j’ai fait pour les cartes avec les clusters.
 
 ``` r
-mont.map = classic.map +
+classic.map +
   geom_text(data = banc, 
             aes(txt.lon, txt.lat, label = local_name), 
             fontface = "bold", 
             size = 3)
-
-mont.map
 ```
 
-![](rpz_rmark_files/figure-gfm/unnamed-chunk-4-1.png)<!-- --> <br/>
+![](rpz_rmark_files/figure-gfm/unnamed-chunk-5-1.png)<!-- --> <br/>
 <br/>
+
+# Carte bathymétrique de la ZEE
+
+Avant de vraiment utiliser ces couches, on réalise une carte
+bathymétrique de la zone de spa dézoomée pour montrer la ZEE. On le fait
+maintenant car cela demande un dézoom, il faut donc reprendre *standard
+map* et le modifier un peu:
+
+``` r
+ggplot() + 
+  #reprise de standard map:
+  xlim(73, 82)+ ylim(-42, -34.4) + #limite plus large pour avoir la ZEE
+  xlab("Longitude") + ylab("Latitude") +
+  theme(plot.title = element_text(hjust = 0.5),
+        plot.margin = margin(0, 3, 0, 1, "cm")) +
+  theme(panel.background = element_rect(fill = "transparent", colour = "black")) +
+  
+  #puis reprise de classic map:
+  geom_sf(
+    data = spa %>% dplyr::filter(district %in% c("SPA")),
+    colour = "#b2182b",
+    inherit.aes = F,
+    size = 0.5,
+    fill = "transparent"
+  ) +
+  geom_sf(
+    data = Isobath_SPA_large_sf  %>% dplyr::filter(level %in% c("-1000")),
+    colour = "grey20",
+    inherit.aes = F,
+    size = 0.5
+  ) +
+  geom_sf(
+    data = Isobath_SPA_large_sf  %>% dplyr::filter(level %in% c("-2000")),
+    colour = "grey40",
+    inherit.aes = F,
+    size = 0.5
+  ) +
+  geom_sf(
+    data = Isobath_SPA_large_sf  %>% dplyr::filter(level %in% c("-3000")),
+    colour = "grey60",
+    inherit.aes = F,
+    size = 0.5
+  ) +
+  geom_sf(
+    data = Isobath_SPA_large_sf  %>% dplyr::filter(level %in% c("-4000")),
+    colour = "grey80",
+    inherit.aes = F,
+    size = 0.5
+  ) +
+  geom_sf(data = FR_island_sf ,
+          fill = "black",
+          inherit.aes = F) +
+  
+  #Enfin, ajout de la ZEE:
+  geom_sf(
+    data = EEZ_sf,
+    color = '#ff8c00',
+    fill = "transparent",
+    inherit.aes = F,
+    size = 0.5
+  )
+```
+
+![](rpz_rmark_files/figure-gfm/unnamed-chunk-6-1.png)<!-- --> <br/>
+<br/> <br/>
 
 # Carte des clusters par monts sous-marins
 
@@ -229,7 +325,7 @@ col_banc$color[which(col_banc$color == "#A6CEE3" )] = "#2f7296" #bleu
 col_banc$color[which(col_banc$color == "#E0B61D" )] = "#ac8c16" #orange
 
 #carte:
-col_mont.map = classic.map +
+classic.map +
   geom_text (data = col_banc,
               aes(lon, lat,
                   label = local_name),
@@ -237,13 +333,11 @@ col_mont.map = classic.map +
              fontface = "bold",
              size = 4.5)+
   theme(legend.position="none")
-
-col_mont.map
 ```
 
-![](rpz_rmark_files/figure-gfm/unnamed-chunk-5-1.png)<!-- --> La carte
-est un peu moche, quand on la grandit les noms des monts rapeticent
-relativement a la carte, elle est donc plus harmonieuse…  
+![](rpz_rmark_files/figure-gfm/unnamed-chunk-7-1.png)<!-- --> La carte
+est un peu moche, mais quand on la grandit, les noms des monts
+rapeticent relativement a la carte, elle est donc plus harmonieuse…  
 <br/> <br/>
 
 # Cartes en relief
@@ -263,7 +357,8 @@ s’utilise pas (ou pas simplement) avec ggplot.
 - La fonction
 [geom\_contour\_tanaka](https://eliocamp.github.io/metR/reference/geom_contour_tanaka.html)
 du package MetR. Elle est plus compliquée à utiliser que l’autre
-package, mais plus complète, et donc préférable.  
+package, mais plus complète, et donc préférable.
+
 Ici on utilisera les 2 fonction, selon la complexité de la carte
 réalisée.
 
@@ -301,7 +396,7 @@ points(x = banc$lon,
        col = "red")
 ```
 
-![](rpz_rmark_files/figure-gfm/unnamed-chunk-6-1.png)<!-- --> Deux
+![](rpz_rmark_files/figure-gfm/unnamed-chunk-8-1.png)<!-- --> Deux
 remarques:  
 Tout d’abord, on voit que la carte comporte de nombreux trous, il manque
 de nombreuses données. Les limites au Nord-Est s’arrêtent avant Cap-Hotn
@@ -378,10 +473,13 @@ tancarte = ggplot() +
              size = 3.5)+
   theme_void() +
   labs(fill = "Depth (m)")
+
+tancarte
 ```
 
-Cette carte pourra être utilisée comme foncd pour représenter la
-localisation des opérations de pêche par exemple.  
+![](rpz_rmark_files/figure-gfm/unnamed-chunk-9-1.png)<!-- --> Cette
+carte pourra être utilisée comme foncd pour représenter la localisation
+des opérations de pêche par exemple.  
 <br/> <br/>
 
 # Cartes des clusters par opérations de pêche
@@ -390,40 +488,22 @@ Cela concerne plusieurs cartes: On représente d’abord simplement
 l’emplacement des opérations de pêche, avec des zooms à différents
 endroits. Puis on représente les clusters correspondant a ces opérations
 de pêche.  
-Les op de peche (première carte, simple, réalisée avec geom\_sf, et les
-2 autres avec geom\_point. En vérité les 2 modes d’écriture
-fonctionnent. Pour la carte très zoomée, j’ai représenté en différentes
-couleurs les points appartenant à 16 miles):
+Pour la carte très zoomée, j’ai représenté en différentes couleurs les
+points appartenant à 16 miles):
 
 ``` r
 #carte simple
-op.map = classic.map +
-  geom_sf(
-    data = catch_op_peche,
-    aes(geometry = geometry),
-    colour = "blue",
-    size = 1)
-
-op.map
-```
-
-![](rpz_rmark_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
-
-``` r
-#zoom léger:
-op.map2 = classic.map +
+classic.map +
   geom_point(
     data = catch_op_peche,
     aes(x = mean.lon,
         y = mean.lat),
     colour = "blue",
     size = 0.5) +
-  xlim(76.5, 79)+ ylim(-39.3, -36.6)
-
-op.map2
+  xlim(76.5, 79)+ ylim(-39.3, -36.6) #zoom léger par rapport à la carte classique
 ```
 
-![](rpz_rmark_files/figure-gfm/unnamed-chunk-8-2.png)<!-- -->
+![](rpz_rmark_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
 
 ``` r
 #zoom vers 16 miles:
@@ -434,7 +514,7 @@ classic.map +
         y = mean.lat),
     colour = "blue",
     size = 1) +
-  geom_point( #pour les points qui appartiennent à 12.Miles:
+  geom_point( #pour les points qui appartiennent à 16.Miles:
     data = catch_op_peche[which(catch_op_peche$area == "16.Milles"),],
     aes(x = mean.lon,
         y = mean.lat),
@@ -443,7 +523,7 @@ classic.map +
   xlim(77.2, 78.3)+ylim(-39.4, -38.4)
 ```
 
-![](rpz_rmark_files/figure-gfm/unnamed-chunk-8-3.png)<!-- --> On peut
+![](rpz_rmark_files/figure-gfm/unnamed-chunk-10-2.png)<!-- --> On peut
 voir sur la carte zoomée qu’il est parfois difficile d’assimiler une
 opération de pêche à un mont sous-marin. On voit notamment au-dessus du
 mont 16.Miles qu’entre Saint-Paul et Nordet Saint-Paul il y a des
@@ -454,7 +534,7 @@ Les opérations de pêche colorées par clusters:
 ``` r
 op_cluster_simple = readRDS('./modified_data/catch_cluster_op.rds')
 
-clus_op.map = classic.map +
+classic.map +
   geom_point(
     data = op_cluster_simple,
     aes(x = lon,
@@ -463,12 +543,10 @@ clus_op.map = classic.map +
     size = 1) +
   theme(legend.position="none") +
   scale_color_manual(values = c("#84a4b5", "#b39117", "#7c9c60", "#744a51")) + #attribution des couleurs aux clusters
-  xlim(76.5, 79)+ ylim(-39.3, -36.6)
-
-clus_op.map
+  xlim(76.5, 79)+ ylim(-39.3, -36.6) #zoom léger par rapport à la carte classique
 ```
 
-![](rpz_rmark_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+![](rpz_rmark_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
 
 Enfin, la même carte sur un fond tanaka réalisé précédemment:
 
@@ -485,7 +563,7 @@ tancarte +
   scale_color_manual(values = c("#0c70a4", "#5d9d25", "#744a51", "#b39117"))
 ```
 
-![](rpz_rmark_files/figure-gfm/unnamed-chunk-10-1.png)<!-- --> <br/>
+![](rpz_rmark_files/figure-gfm/unnamed-chunk-12-1.png)<!-- --> <br/>
 <br/>
 
 # Cartes des prédictions des clusters:
@@ -499,38 +577,46 @@ sur une carte tanaka (un peu compliquée à lire car bcp de couleurs):
 
 ``` r
 #données:
-predict_bioreg = readRDS('./modified_data/predict_bioreg.rds')
+predict_bioreg = readRDS('./modified_data/prediction_cds.rds')
 predict_bioreg = predict_bioreg[which(predict_bioreg$depth < 1400),]
 
 #rpz classique:
-clus_pred.map = classic.map +
+classic.map +
   geom_raster(
     data = predict_bioreg,
-    aes(x = long,
+    aes(x = mean.lon,
         y = mean.lat,
-        fill = pred_clus,
+        fill = bioreg,
         alpha = 0.1)) +
   theme(legend.position="none") +
-  scale_fill_manual(values = c("#84a4b5", "#b39117", "#7c9c60", "#744a51"))
-
-clus_pred.map
+  scale_fill_manual(values = c("#84a4b5", "#b39117", "#7c9c60", "#744a51")) +
+  #ajouter un contour noir à -1500m:
+  geom_sf(
+    data = Isobath_SPA_large_sf  %>% dplyr::filter(level %in% c("-1500")),
+    colour = "black",
+    inherit.aes = F,
+    size = 0.5) +
+  xlim(76, 79)+ ylim(-39.5, -36.3)
 ```
 
-![](rpz_rmark_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+![](rpz_rmark_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
 
 ``` r
 #rpz tanaka:
 tancarte +
   geom_raster(
     data = predict_bioreg,
-    aes(x = long,
+    aes(x = mean.lon,
         y = mean.lat,
-        fill = pred_clus,
+        fill = bioreg,
         alpha = 0.1)) +
   theme(legend.position="none") +
-  scale_fill_manual(values = c( '#ffc4c4', rev(pal(length(couches)-2)),
+  scale_fill_manual(values = c( '#f1f2e3', rev(pal(length(couches)-1)[-(length(couches)-1)]),
                                "#84a4b5", "#b39117", "#7c9c60", "#744a51"))
 ```
 
-![](rpz_rmark_files/figure-gfm/unnamed-chunk-11-2.png)<!-- --> Bon il y
-a encore quelques modifs a faire pour la représentation tanaka…
+![](rpz_rmark_files/figure-gfm/unnamed-chunk-13-2.png)<!-- --> Bon il y
+a encore quelques modifs a faire pour la représentation tanaka…  
+Autre commentaire: selon le cahngement des limites géographiques, la
+carte est déformée. Il y a une fonction pour éviter ça, faut que je la
+retrouve.

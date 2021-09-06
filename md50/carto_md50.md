@@ -188,7 +188,7 @@ classic.map
 Cette carte montre tout simplement où sont situés les différents sites.
 
 ``` r
-op.map = classic.map +
+classic.map +
   geom_point(
     data = md_gps,
     aes(x = mean_lon,
@@ -196,8 +196,6 @@ op.map = classic.map +
     colour = "blue",
     inherit.aes = F,
     size = 1)
-
-op.map
 ```
 
 ![](carto_md50_files/figure-gfm/unnamed-chunk-4-1.png)<!-- --> <br/>
@@ -206,7 +204,7 @@ Les sites peuvent être différenciés selon la campagne à laquelle ils
 appartiennent:
 
 ``` r
-op.map_noms = classic.map +
+classic.map +
   geom_point(
     data = md_gps,
     aes(x = mean_lon,
@@ -214,8 +212,6 @@ op.map_noms = classic.map +
         color = CAMPAGNE.ACRONYME),
     inherit.aes = F,
     size = 1)
-  
-op.map_noms
 ```
 
 ![](carto_md50_files/figure-gfm/unnamed-chunk-5-1.png)<!-- --> <br/>
@@ -444,24 +440,31 @@ On commence par le carte générale:
 ``` r
 predict_bioreg = readRDS('./modified_data/predict_bioreg_md50.rds')
 predict_bioreg = predict_bioreg[which(predict_bioreg$prof < 1500),]
+predict_bioreg$bioreg = as.factor(predict_bioreg$bioreg)
 
-clus_pred.map = classic.map +
+classic.map +
   geom_raster(
     data = predict_bioreg,
     aes(x = long,
         y = lat,
-        fill = pred_clus,
+        fill = bioreg,
         alpha = 0.1)) +
   theme(legend.position="none") +
-  scale_fill_manual(values = c("#ffa500", "#bb0000", "#1F78B4", "#8dd3c7"))
-
-clus_pred.map
+  scale_fill_manual(values = c("#ffa500", "#bb0000", "#1F78B4", "#8dd3c7")) +
+  #contours a -1500m en noir:
+  geom_sf(
+    data = Isobath_SPA_large_sf  %>% dplyr::filter(level %in% c("-1500")),
+    colour = "black",
+    inherit.aes = F,
+    size = 0.5) +
+  #zoom sur la zone de prédiction:
+  xlim(76.3, 78.5)+ ylim(-39.4, -37.2)
 ```
 
     ## Warning: Raster pixels are placed at uneven vertical intervals and will be
     ## shifted. Consider using geom_tile() instead.
 
-    ## Warning: Removed 3029 rows containing missing values (geom_raster).
+    ## Warning: Removed 5294 rows containing missing values (geom_raster).
 
 ![](carto_md50_files/figure-gfm/unnamed-chunk-15-1.png)<!-- --> <br/>
 
@@ -488,24 +491,31 @@ writeRaster(raster_poissons_demersaux, filename="./results/raster_poissons_demer
 Et enfin, la même carte pour les mollusques:
 
 ``` r
-predict_bioreg_mol = readRDS('./modified_data/predict_bioreg_md50_mol.rds')
+predict_bioreg_mol = readRDS('./modified_data/predict_bioreg_mol_md50.rds')
 predict_bioreg_mol = predict_bioreg_mol[which(predict_bioreg_mol$prof < 1500),]
+predict_bioreg_mol$bioreg = as.factor(predict_bioreg_mol$bioreg)
 
-clus_pred.map_mol = classic.map +
+classic.map +
   geom_raster(
     data = predict_bioreg_mol,
     aes(x = long,
         y = lat,
-        fill = pred_clus), alpha = 0.6) +
+        fill = bioreg), alpha = 0.6) +
   theme(legend.position="none") +
-  scale_fill_manual(values = c("#fb8072", "#8dd3c7", "#33A02C", "#bebada"))
-
-clus_pred.map_mol
+  scale_fill_manual(values = c("#fb8072", "#8dd3c7", "#33A02C", "#bebada")) +
+  #contours a -1500m en noir:
+  geom_sf(
+    data = Isobath_SPA_large_sf  %>% dplyr::filter(level %in% c("-1500")),
+    colour = "black",
+    inherit.aes = F,
+    size = 0.5) +
+  #zoom sur la zone de prédiction:
+  xlim(76.3, 78.5)+ ylim(-39.4, -37.2)
 ```
 
     ## Warning: Raster pixels are placed at uneven vertical intervals and will be
     ## shifted. Consider using geom_tile() instead.
 
-    ## Warning: Removed 3029 rows containing missing values (geom_raster).
+    ## Warning: Removed 5294 rows containing missing values (geom_raster).
 
 ![](carto_md50_files/figure-gfm/unnamed-chunk-17-1.png)<!-- --> <br/>
