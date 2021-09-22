@@ -32,18 +32,19 @@ clusters).
 - Lire les résultats et attribuer des couleurs aux clusters.  
 - Extraire les participations des sites et des espèces aux clusters
 (IndVal).  
-- Représenter graphiquement le réseau sur gephi.
+- Représenter graphiquement le réseau sur gephi.  
+<br/> <br/> <br/> <br/> <br/>
 
 # Initialisation
 
 On va avoir besoin de plusieurs packages:  
 - *tidyverse* pour la manipulation de données (tidyr, dplyr, …),  
 - *ggplot2* et *RColorBrewer* pour la représentation graphique,  
--*biogeonetworks* pour réaliser des analyses de réseau, qui n’est pas
+- *biogeonetworks* pour réaliser des analyses de réseau, qui n’est pas
 dans le cran pour le moment, et doit donc être installé depuis github.
 Le tuto pour biogeonetworks [est
-ici.](https://github.com/Farewe/biogeonetworks#requirements), il
-explique très pédagogiquement comment réaliser des analyses de réseau.
+ici](https://github.com/Farewe/biogeonetworks#requirements), il explique
+très pédagogiquement comment réaliser des analyses de réseau.
 
 Il est aussi nécessaire d’avoir dans son directory le code source de
 l’algorithme infomap de Map Equation, depuis le site de Map Equation ou
@@ -86,19 +87,19 @@ head(catch_op_peche)
     ## #   time.filage <dttm>, time.virage <dttm>, H.virage <dbl>, area <chr>,
     ## #   geometry <POINT>, CPUE.hooks <dbl>, CPUE.nb.hooks <dbl>
 
-<br/>
+<br/> <br/> <br/> <br/> <br/>
 
 # Analyses aggrégées aux monts sous-marins
 
 ## Preparation des données / algorithme Infomap
 
 Il s’agit de charger le tableau, et de le transformer en format pajek,
-pour le faire lire par l’algorithme infomap. Pour ca, on récupère les
+format lisible par l’algorithme infomap. Pour ca, on récupère les
 variables qui peuvent nous être utiles (les noms d’espèces, types de
-lignes, monts sous-marins, et le nombre d’individus ammeçonnés et le
+lignes, monts sous-marins, et le nombre d’individus ammeçonnés + le
 temps de pêche, pour pouvoir calculer la cpue). Ensuite on somme ces
-données par mont sous-marin, et on transforme au format pajek (fonction
-biogeonetworks):
+données par mont sous-marin (variable *area*), et on transforme au
+format pajek (fonction biogeonetworks):
 
 ``` r
 #sélection des variables et somme par mont sous-marin:
@@ -138,17 +139,17 @@ un fichier catch.net a été créé dans mon dossier. <br/>
 On execute ensuite l’algorithme infomap a partir du fichier pajek créé.
 L’algorithme demande plusieurs arguments, dont seul le nombre de run est
 important ici:  
-- undirected : les liens du reseau n’ont pas de direction (certain
+- *undirected* : les liens du reseau n’ont pas de direction (certain
 réseau ont des liens allant seulement dans une direction, ce n’est pas
 le cas dans notre type d’analyses).  
-- tree : output file format .tree.  
-- map : output file format .map.  
-- N xxx : nombre de runs de l’algorithme. Cet algorithme doit partir de
-positions aléatoires plusieurs fois pour trouver un solution de
+- *tree* : output file format .tree.  
+- *map* : output file format .map.  
+- *N xxx* : nombre de runs de l’algorithme. Cet algorithme doit partir
+de positions aléatoires plusieurs fois pour trouver un solution de
 clustering optimale. On a fixé ce nombre à 1000, pour notre cas choisir
 plus de run ne change pas la solution optimale. Mais il est possible que
 ce ne soit pas le cas sur d’autres jeux de données.  
-- catch.net : le fichier pajek a traiter.
+- *catch.net* : le fichier pajek a traiter.
 
 ``` r
 system("infomap --undirected --tree --map -N 1000 catch.net ./")
@@ -156,20 +157,19 @@ system("infomap --undirected --tree --map -N 1000 catch.net ./")
 
     ## [1] 0
 
-L’algorithme exécuté sort plein d’informations. Seul le dernier tableau
-donne des informations utiles:  
-Best end modular solution in 2 levels: Il a créé un réseau à 2 niveaux
-hiérarchiques (visualiser comme une CAH). number of modules: nombre de
-clusters trouvés pour chaque niveau. <br/>
-
-Ici on voit qu’un cluster a été trouvé pour le niveau 1, et 0 pour le
-niveau 2. Cela signifie que l’algortihme n’a pas réussi à différencier
-des groupes au sein du réseau. On peut l’expliquer par le fait que les
-monts sous-marins présentent quasiment les mêmes espèces, leur
-similarité est trop forte. Pour aider à la différencier, on peut inclure
-dans l’analyse la cpue, pour ne différencier les sites non plus par la
-présence / absence d’espèces, mais par la présence plus ou moins
-importante de ces espèces:
+L’algorithme exécuté sort plein d’informations, je ne les ai pas fait
+afficher pour ne pas surcharger le document, seul le dernier tableau
+affiché donne des informations utiles:  
+*Best end modular solution in 2 levels* -&gt; L’algorithme a créé un
+réseau à 2 niveaux hiérarchiques (visualiser comme une CAH).  
+L’algorithme nous informe aussi du fait qu’un cluster a été trouvé pour
+le niveau 1, et 0 pour le niveau 2. Cela signifie que l’algortihme n’a
+pas réussi à différencier des groupes au sein du réseau. On peut
+l’expliquer par le fait que les monts sous-marins présentent quasiment
+les mêmes espèces, leur similarité est trop forte. Pour aider à les
+différencier, on peut inclure dans l’analyse la cpue, on distinguera
+alors les sites non plus par la présence / absence d’espèces, mais par
+la présence plus ou moins importante de ces espèces:
 
 ``` r
 #export format pajek en prenant en compte la cpue:
@@ -185,19 +185,21 @@ system("infomap --undirected --tree --map -N 1000 catch_ab.net ./")
 
     ## [1] 0
 
-3 clusters ont été trouvés. <br/> <br/>
+3 clusters ont été trouvés.  
+<br/> <br/> <br/>
 
 ## Visualisation sommaire
 
 La sortie de cet algorithme est un tableau qui peut être lu avec la
-fonction readInfomapTree. Ce tableau comporte plusieurs colonnes:  
+fonction *readInfomapTree*.  
+Ce tableau comporte plusieurs colonnes:  
 - Chaque ligne est un noeud, donc une espèce ou un site.  
-- Groups = Cluster auquel le noeud appartient, au premier et au 2eme
+- *Groups* = Cluster auquel le noeud appartient, au premier et au 2eme
 niveau (car on en a que 2 ici).  
-- Codelength (pas important) = information quantitative utilisée par
+- *Codelength* (pas important) = information quantitative utilisée par
 l’algorithme (on s’en fiche).  
-- Name = nom du cluster.  
-- Lvl1, lvl2, … donne l’identifiant pour chaque niveau hiérarchique
+- *Name* = nom du cluster.  
+- *Lvl1, lvl2, …* donne l’identifiant pour chaque niveau hiérarchique
 (c’est la meme chose que *Groups*, mais séparé par colonnes).
 
 ``` r
@@ -215,20 +217,10 @@ head(catch_ab.clusters)
     ## 5    1:5  0.0343849 16.Milles 28    1 16.Milles
     ## 6    1:6  0.0262177 45.milles 29    1 45.milles
 
-``` r
-#Nombre de noeuds pour chaque cluster.
-plyr::count(catch_ab.clusters$lvl1)
-```
-
-    ##   x freq
-    ## 1 1   15
-    ## 2 3   13
-    ## 3 2    9
-
 <br/>
 
-Il y a une fonction pour récupérer uniquement les lignes des sites, ou
-des espèces, du tableau ci-dessus:
+Il y a une fonction pour récupérer uniquement les noeuds correspondant à
+des sites, ou des espèces, du tableau ci-dessus:
 
 ``` r
 catch.sites <- getSiteTable(catch_area, #le tableau initial
@@ -266,10 +258,10 @@ plyr::count(catch.sp$lvl1)
     ## 2 3   11
     ## 3 2    6
 
-Les sites et les espèces semblent être représentées assez homogènement
-dans les clusters.
-
-<br/> <br/>
+Pour chaque cluster (1, 3, 2), on a le nombre de noeuds correspondant à
+des sites, ou des espèces. On peut déjà voir qu’il n’y a pas de site ou
+d’espèce très éloigné des autres, formant tout seul un cluster.  
+<br/> <br/> <br/>
 
 ## export pour représentation graphique
 
@@ -278,7 +270,7 @@ des couleurs aux différents noeuds, en fonction du cluster auquel ils
 appartiennent, avec la fonction attributeColors:  
 - On pourrait choisir d’attribuer des couleurs a partir des cluster
 créés a un niveau hiérarchique plus élevé, si on en avait (chez nous les
-2eme niveau crée un cluster par noeud).  
+2eme niveau sépare tous les noeuds, il crée un cluster par noeud).  
 - Si quelques clusters ne concernent qu’un site et très peu d’espèces,
 qu’on les considère comme peu intéressants à représenter, on peut les
 mettre tous d’une même couleur. C’est l’utilité des argument
@@ -333,7 +325,7 @@ writeGDF(db = catch_area, # Database of step 1
 
 Pour représenter les monts sous-marins par clusters, colorés sur une
 carte, on peut aussi créer un tableau dédié (les représentations
-graphiques sont faites dans un script dédié, rpz\_graphique):
+graphiques sont décrites dans le Rmd *Cartographie*):
 
 ``` r
 banc = read.table("C:/travail/analyses_spa/analyses_croixdusud/original_data/banc_id.txt", h=T)
@@ -375,11 +367,11 @@ appartenir a différents clusters. Les clusters sélectionnés ne seraient
 alors pas révélateurs de différences entre monts, mais bien plus de
 différences entre opérations pêches, parfois au sein d’un même mont.
 Cela se voit lorsqu’on représente les clusters auxquels appartiennent
-chaque op de peche à la variable profondeur (ces analyses sont faites
-dans un autre script, dans la partie *Analyses de corrélation*, cf
-sommaire).  
-On va donc réaliser les mêmes analyses, mais par opération de peche.
-<br/> <br/> <br/>
+chaque op de peche à la variable profondeur (ces analyses sont
+détaillées dans un autre script, dans la partie *Analyses de
+corrélation*, cf sommaire).  
+On va donc réaliser les mêmes analyses, mais par opération de peche.  
+<br/> <br/> <br/> <br/> <br/>
 
 # Analyses par op de peche
 
@@ -397,7 +389,7 @@ for (i in 1:nrow(tempcoord)) { #pour chaque op,
     donnees_site = catch_op_peche[which( #on prend les lignes concernées par cette op
       catch_op_peche$mean.lat == tempcoord$mean.lat[i] &
       catch_op_peche$mean.lon == tempcoord$mean.lon[i]),]
-    catch_res = rbind( #on ajoute les données au tableau:
+    catch_res = rbind( #et on ajoute les données au tableau:
       catch_res,
       data.frame(
         num = rep(paste0(donnees_site$area[1],i), nrow(donnees_site)), #num = nom du mont - i
@@ -438,7 +430,8 @@ system("infomap --undirected --tree --map -N 1000 catch_site.net ./")
 
     ## [1] 0
 
-L’algorithme a trouvé 4 clusters <br/> <br/>
+L’algorithme a trouvé 4 clusters.  
+<br/> <br/> <br/>
 
 ## Visualisation sommaire
 
@@ -475,9 +468,8 @@ plyr::count(catch.sp$lvl1)
     ## 3 4    5
     ## 4 2    1
 
-Ici on voit que le cluster 2 ne comporte qu’une seule espèce.
-
-<br/> <br/>
+Ici on voit que le cluster 2 ne comporte qu’une seule espèce.  
+<br/> <br/> <br/>
 
 ## export pour représentation graphique
 
@@ -493,7 +485,7 @@ catch_op.clusters <- attributeColors(network = catch_op.clusters,# meme tableau 
                                      site.field = "num", # Name of site column in your database
                                      species.field = "espece") # Name of species column in your database
 
-#il y a 2 couleursqui ne ressortent pas bien, on les change:
+#il y a 2 couleurs qui ne ressortent pas bien, on les change:
 catch_op.clusters$colors.lvl1[which(catch_op.clusters$colors.lvl1 == "#1F78B4")] ="#E0B61D"
 catch_op.clusters$colors.lvl1[which(catch_op.clusters$colors.lvl1 == "#33A02C")] ="#A76A75"
 
@@ -508,16 +500,17 @@ writeGDF(db = catch_res,
          abundance.field = "cpue")
 ```
 
-<br/> <br/>
+<br/> <br/> <br/>
 
 ## Participation des sites et des espèces aux clusters / export des données:
 
 La prochaine étape est d’extraire la participation de chaque site et
 espèce au cluster qu’il représente. Pour ça, une fonction existe avec
-biogeonetworks, mais elle ne prend pas en compte le paramètres
+biogeonetworks, mais elle ne prend pas en compte le paramètre
 d’abondance (ici la cpue). J’ai donc modifié cette fonction, et c’est
-cette fonction modifiée qu’on appelle ici (il faudrait aussi que je
-détaille ce script un de ces 4):
+cette fonction modifiée qu’on appelle ici (je n’ai pas décrit les lignes
+de code de la fonction, mais le script est tout de même disponible
+[ici](https://github.com/ArionRufus/bioregions_benthiques_SPA/blob/master/cds/metrique_reseaux.R)):
 
 ``` r
 source('metrique_reseaux.R')
@@ -564,25 +557,23 @@ head(catch_op_metrics$site.stats)
     ## 16.Milles20 16.Milles20       4 -1.1805721 -0.16865316 -161.85573 -23.12225
     ## 45.milles13 45.milles13       1 -0.0225387 -0.00450774  842.16948 168.43390
 
-pour les espèces: .Ai = affinité: proportion de richesse amenée dans le
-cluster vs richesse dans le cluster.  
-.Fi = fidélité: proportion de richesse amenée au sein du cluster vs dans
-tous les sites.  
-.Inval = metrique inval: a quel point l’sp participe au cluster.  
-.Dival = metrique de dilution: a quel point l’sp est présente partout.
+pour les espèces:  
+- .Ai = affinité: proportion de richesse amenée dans le cluster vs
+richesse dans le cluster.  
+- .Fi = fidélité: proportion de richesse amenée au sein du cluster vs
+dans tous les sites.  
+- .Inval = metrique inval: a quel point l’sp participe au cluster.  
+- .Dival = metrique de dilution: a quel point l’sp est présente partout.
 
-Pour les sites: .Rg = participation du site: Participation des sps
-caractéristiques - dilution des espèces non caractéristiques.  
-.RRg = participation pondérée du site: participation / nb d’especes dans
-ce site.  
-<br/> ATTENTION : Les calculs de participation pour les suites ont je
-pense une petite erreur de logique qu’il faut que je fixe. Je ne les
-considère pas comme fiables. Je les représente tout de même dans ce
-script pour montrer l’idée.  
+Pour les sites:  
+- .Rg = participation du site: Participation des sps caractéristiques -
+dilution des espèces non caractéristiques.  
+- .RRg = participation pondérée du site: participation / nb d’especes
+dans ce site.  
 <br/>
 
-On représente graphiquement la participation des espèces et des sites.
-Pour les espèces, avec l’indicative value:
+On représente graphiquement la participation des espèces et des sites.  
+D’abord pour les espèces, avec l’indicative value:
 
 ``` r
 num_cluster = 1 #choisir ici quel cluster on veut représenter graphiquement
@@ -611,7 +602,7 @@ ggplot(sp_metrics_clus_num, aes(x=species, y=Rich.IndVal) ) +
 
 ![](reseaux_rmark_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
 
-Et pour les sites, la participation absolue et relative du site:
+Ensuite pour les sites, la participation absolue et relative du site:
 
 ``` r
 num_cluster = 4 #choisir ici quel cluster on veut représenter graphiquement
