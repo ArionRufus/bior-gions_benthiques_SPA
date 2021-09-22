@@ -15,17 +15,19 @@ Le but de ce script est de tranformer et fusionner ces données pour
 arriver à un tableau (*catch\_op\_peche*), dans lequel chaque ligne
 présente une espèce pêchée lors d’une opération de pêche. Les colonnes
 présentent de nombreuses variables, soit relatives à l’opération de
-pêche (position GPS, profondeur, …), soit relative à l’espèce (nom de
-l’espèce, nombre d’individus pêchés, …). Ce script est découpé en 3
-parties (cf sommaire ci-dessus). D’abord l’initialisation classique du
-script, puis la mise en forme des 3 jeux de données, et enfin la fusion
-de ces 3 jeux de connées pour n’en avoir qu’un à la fin. A chaque
-sous-partie de la mise en forme, une petite intro précise le contenu du
-jeu de données, et les actions qui vont y être faites.
+pêche (position GPS, profondeur, identifiant de l’opération de pêche,
+…), soit relative à l’espèce (nom de l’espèce, nombre d’individus
+pêchés, …).  
+Ce script est découpé en 3 parties (cf sommaire ci-dessus). D’abord
+l’initialisation classique du script, puis la mise en forme des 3 jeux
+de données, et enfin la fusion de ces 3 jeux de connées pour n’en avoir
+qu’un à la fin. A chaque sous-partie de la mise en forme, une petite
+intro précise le contenu du jeu de données, et les actions qui vont y
+être faites.
 
 Ce script est une modification du script de base réalisé par Aurélien
 Favreau et Jules Selles, merci à eux pour leur travail qui m’a
-grandement facilité la tache.
+grandement facilité la tache. <br/> <br/> <br/> <br/>
 
 # Initialisation
 
@@ -44,7 +46,7 @@ initialwd = ("C:/travail/analyses_spa/analyses_croixdusud")
 setwd(initialwd)
 ```
 
-<br/> <br/>
+<br/> <br/> <br/> <br/>
 
 # accquisition et transformation des données
 
@@ -72,15 +74,30 @@ head(catch_peche)
 
 <br/>
 
-Donner le bon nom aux espèces:
+Donner le bon nom aux espèces:  
+Pour ça on exécute un script qui crée une liste nommée
+*level\_key\_taxon*, donnant les noms scientifiques correspondants aux
+différents noms communs.
 
 ``` r
 source('./scripts/species_names.R')
-#script contenant les équivalences entre noms communs et scientifiques des espèces
+head(level_key_taxon)
+```
 
+    ##                 Beuroisia duhameli               Chaecon (crabe orange) 
+    ##                "Beuroisia duhameli"                 "Chaceon paulensis" 
+    ##         requin grande épine (en D2) requin grande épine (D2) peau lisse 
+    ##             "Etmopterus granulosus"             "Etmopterus granulosus" 
+    ##           requin grande épine lisse             Siki grande épine en D2 
+    ##             "Etmopterus granulosus"             "Etmopterus granulosus"
+
+Ici, on a par exemple *requin grande épine (D2) peau lisse* -&gt;
+*“Etmopterus granulosus”*. <br/>
+
+``` r
 catch_peche <- catch_peche %>% 
   mutate(espece = recode(factor(espece), !!!level_key_taxon)) %>% #renommer les espèces, en facteurs
-  select(-c(modèle.casier, position)) #remove useless variables
+  select(-c(modèle.casier, position)) #enlever les variables inutiles
 ```
 
 <br/>
@@ -95,13 +112,13 @@ catch_peche <- catch_peche %>% group_by(type, numero, espece) %>%
                    kg.net=sum(kg.net,na.rm=T), )
 ```
 
-<br/> <br/>
+<br/> <br/> <br/> <br/>
 
 ## transformation de op\_peche
 
-Catch contient des informations sur les prises de chaque op de peche.  
+Op\_peche nous donne des variables liées à chaque op de peche.  
 Transformations à faire :  
-- Corriger les erreurs sur les valeurs nummériques.  
+- Corriger les erreurs sur les valeurs numériques.  
 - Mettre en forme les variables temporelles et spatiales.  
 - Moyenner les valeurs de profondeur et localisation entre le début et
 la fin de la ligne de pêche.  
@@ -155,7 +172,7 @@ en numériques, on voit qu’il y a des erreurs (des NA sont créés):
 initial_data = op_peche %>%
   dplyr :: select(starts_with(c("long","est","vts","sud","lat","sonde"))) 
 
-#As numeric:
+#as numeric:
 trans_data = initial_data %>% 
   mutate_all(.funs=function(.x) as.numeric(as.character(.x)))
 ```
@@ -210,23 +227,27 @@ op_peche$est_filage[458] = 24.0
 op_peche$est_filage[614] = 38.0
 op_peche$est_filage[832] = 30.58
 
-rm(initial_data, trans_data, before, after, changes, difs_tab)
+rm(initial_data, trans_data, before, after, changes, difs_tab) #on supprime les variables créées, maintenant inutiles
 ```
 
 <br/>
 
-On repasse les varaibles en numérique pour regarder si on n’a plus
+On repasse les varaibles en numérique, on regarde s’il n’y plus
 d’erreurs, et on met en forme les variables temporelles du jeu de
 données:
 
 ``` r
 op_peche <- op_peche %>%
+  
+  #on repasse les variables en numérique:
   mutate(across(starts_with(c("long","est","vts","sud","lat","sonde")),
          .fns=function(.x) as.numeric(as.character(.x)))) %>%
-  #replace dates / hours with NA by 0:
+  
+  #on remplace les dates / heures en NA par 0:
   mutate(across(starts_with(c("date","heure")), 
          .fns=function(.x) replace_na(.x, 0))) %>%
-  #melt date and hour:
+  
+  #on fusionne date et heure en une variable:
   unite('date_heure_virage', c("date_virage", "heure_virage"), sep=" ", na.rm = T) %>% 
   unite('date_heure_filage', c("date_filage", "heure_debut_filage"), sep=" ", na.rm = T) %>% 
   #rewriting of date /hour in new columns:
@@ -304,7 +325,7 @@ op_peche_agreg <- op_peche_agreg %>%
   relocate(H.virage, .after = time.virage)
 ```
 
-<br/> <br/>
+<br/> <br/> <br/> <br/>
 
 ## transformation de banc\_peche
 
@@ -345,7 +366,7 @@ de données)
 ``` r
 banc_peche <- banc_peche %>% 
   rowwise() %>% 
-  mutate(lat = -lat) %>% #comme pour op peche, -lat cause we are in the south
+  mutate(lat = -lat) %>% #comme pour op peche, -lat parce qu'on est dans le sud
   ungroup() %>%
   mutate(banc.id = as.numeric(row.names(banc_peche))) %>%
   st_as_sf(., coords = c("lon","lat"))
@@ -383,7 +404,7 @@ closest_banc = st_op_peche %>% rowwise()%>%
   st_distance(banc_peche) %>% #pour chaque op, determine la distance geographique a tous les bancs
   as.data.frame() %>%
   rowwise()%>%
-  summarise(banc.id.min=which.min(c_across(1:nrow(banc_peche)))) #get the min. distance
+  summarise(banc.id.min=which.min(c_across(1:nrow(banc_peche)))) #le distance minimale
 closest_banc
 ```
 
@@ -403,7 +424,8 @@ closest_banc
     ## # ... with 58 more rows
 
 Le tableau représente en première colonne chaque op de peche, et en
-deuxième l’ID du mont sous-marin le plus proche. <br/> <br/> <br/>
+deuxième l’ID du mont sous-marin le plus proche. <br/> <br/> <br/> <br/>
+<br/>
 
 # Fusion des données
 
