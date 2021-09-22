@@ -24,10 +24,10 @@ de réseau. En sortie, il crée un tableau présentant les clusters
 déterminés pour chaque opération de pêche, *catch\_res*, ainsi que des
 fichiers permettant de représenter geaphiquement les analyses de réseau
 réalisées, fichiers disponibles
-[ici](https://github.com/ArionRufus/bioregions_benthiques_SPA/blob/master/cds/data_prep_rmark.md_fichiers_Gephi).
+[ici](https://github.com/ArionRufus/bioregions_benthiques_SPA/blob/master/cds/fichiers_Gephi).
 Ce script utilise une fonction calculant les métriques qui a été
 modifiée, [la
-voici](https://github.com/ArionRufus/bioregions_benthiques_SPA/blob/master/cds/metrique_rmark.md).  
+voici](https://github.com/ArionRufus/bioregions_benthiques_SPA/blob/master/cds/metrique_reseaux).  
 <br/> [Analyses de
 corrélation](https://github.com/ArionRufus/bioregions_benthiques_SPA/blob/master/cds/correl_rmark.md).
 Ce script corrèle les clusters trouvés a des données environnementales,
