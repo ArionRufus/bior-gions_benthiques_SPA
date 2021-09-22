@@ -27,7 +27,7 @@ réalisées, fichiers disponibles
 [ici](https://github.com/ArionRufus/bioregions_benthiques_SPA/blob/master/cds/fichiers_Gephi).
 Ce script utilise une fonction calculant les métriques qui a été
 modifiée, [la
-voici](https://github.com/ArionRufus/bioregions_benthiques_SPA/blob/master/cds/metrique_reseaux).  
+voici](https://github.com/ArionRufus/bioregions_benthiques_SPA/blob/master/cds/metrique_reseaux.R).  
 <br/> [Analyses de
 corrélation](https://github.com/ArionRufus/bioregions_benthiques_SPA/blob/master/cds/correl_rmark.md).
 Ce script corrèle les clusters trouvés a des données environnementales,
