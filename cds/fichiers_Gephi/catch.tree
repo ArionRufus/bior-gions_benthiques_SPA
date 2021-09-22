@@ -1,0 +1,39 @@
+# '--undirected --tree --map -N 1000 catch.net ./' -> 37 nodes and 129 links partitioned in 0s from codelength 4.859581631 in one level to codelength 4.859581631 in 2 levels.
+# path flow name node:
+1:1 0.0620155 "Nordet.StPaul.1" 34
+1:2 0.0581395 "Nordet.Amsterdam" 33
+1:3 0.0581395 "Cap.Horn" 31
+1:4 0.0542636 "16.Milles" 28
+1:5 0.0542636 "Tmp4" 36
+1:6 0.0503876 "Amsterdam" 30
+1:7 0.0503876 "Tmp5" 37
+1:8 0.0465116 "Jean.Luc" 32
+1:9 0.0465116 "StPaul" 35
+1:10 0.0387597 "Bassanago nielseni" 2
+1:11 0.0387597 "Helicolenus mouchezi" 10
+1:12 0.0387597 "Etmopterus pusillus" 25
+1:13 0.0348837 "Hyperoglyphe antarctica" 12
+1:14 0.0348837 "Mora moro" 16
+1:15 0.0310078 "Beryx decadactylus" 3
+1:16 0.0271318 "Cirrhigaleus asper" 7
+1:17 0.0271318 "Centroscymnus sp" 24
+1:18 0.0232558 "Etmopterus granulosus" 22
+1:19 0.0193798 "45.milles" 29
+1:20 0.0193798 "Coelorinchus sp1" 8
+1:21 0.0193798 "Polyprion americanus" 19
+1:22 0.0193798 "Hexanchus griseus" 11
+1:23 0.0193798 "Polyprion oxygeneios" 20
+1:24 0.0193798 "Neocyttus rhomboidalis" 18
+1:25 0.0193798 "Pseudotriakis microdon" 21
+1:26 0.0155039 "Beryx splendens" 4
+1:27 0.0116279 "Latris lineata" 13
+1:28 0.0116279 "Schedophilus sp" 27
+1:29 0.0116279 "Malacocephalus laevis" 15
+1:30 0.00775194 "Hydrolagus sp1" 6
+1:31 0.00775194 "Nemadactylus monodactylus" 17
+1:32 0.00387597 "Antimora rostrata" 1
+1:33 0.00387597 "Hydrolagus sp2" 5
+1:34 0.00387597 "Coelorinchus sp2" 9
+1:35 0.00387597 "Tetronarce macneilli" 26
+1:36 0.00387597 "Physiculus sp" 14
+1:37 0.00387597 "Centroselachus crepidater" 23

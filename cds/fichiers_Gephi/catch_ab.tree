@@ -1,0 +1,39 @@
+# '--undirected --tree --map -N 1000 catch_ab.net ./' -> 37 nodes and 129 links partitioned in 0s from codelength 3.926131904 in one level to codelength 3.846710155 in 2 levels.
+# path flow name node:
+1:1 0.226563 "Mora moro" 16
+1:2 0.0900918 "Tmp5" 37
+1:3 0.0621436 "Tmp4" 36
+1:4 0.0437817 "Jean.Luc" 32
+1:5 0.0343849 "16.Milles" 28
+1:6 0.0262177 "45.milles" 29
+1:7 0.01362 "Etmopterus pusillus" 25
+1:8 0.00726194 "Latris lineata" 13
+1:9 0.00636184 "Centroscymnus sp" 24
+1:10 0.00246704 "Neocyttus rhomboidalis" 18
+1:11 0.00225921 "Beryx splendens" 4
+1:12 0.00130765 "Coelorinchus sp1" 8
+1:13 0.00031779 "Nemadactylus monodactylus" 17
+1:14 9.77815e-005 "Centroselachus crepidater" 23
+1:15 7.33361e-005 "Tetronarce macneilli" 26
+2:1 0.0810975 "Cirrhigaleus asper" 7
+2:2 0.0758355 "Nordet.StPaul.1" 34
+2:3 0.0571309 "Hyperoglyphe antarctica" 12
+2:4 0.0455055 "StPaul" 35
+2:5 0.0417706 "Amsterdam" 30
+2:6 0.0228466 "Polyprion oxygeneios" 20
+2:7 0.00165617 "Polyprion americanus" 19
+2:8 0.000744226 "Schedophilus sp" 27
+2:9 7.33361e-005 "Physiculus sp" 14
+3:1 0.0426973 "Nordet.Amsterdam" 33
+3:2 0.0402393 "Etmopterus granulosus" 22
+3:3 0.0375716 "Cap.Horn" 31
+3:4 0.0266968 "Helicolenus mouchezi" 10
+3:5 0.00444014 "Bassanago nielseni" 2
+3:6 0.00271734 "Beryx decadactylus" 3
+3:7 0.000567995 "Pseudotriakis microdon" 21
+3:8 0.000452239 "Hexanchus griseus" 11
+3:9 0.000391126 "Malacocephalus laevis" 15
+3:10 0.000244454 "Antimora rostrata" 1
+3:11 0.000176869 "Hydrolagus sp1" 6
+3:12 0.000146672 "Hydrolagus sp2" 5
+3:13 4.88907e-005 "Coelorinchus sp2" 9

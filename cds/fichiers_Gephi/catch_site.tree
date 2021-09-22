@@ -1,0 +1,62 @@
+# '--undirected --tree --map -N 1000 catch_site.net ./' -> 60 nodes and 268 links partitioned in 0s from codelength 4.764475696 in one level to codelength 4.083579780 in 2 levels.
+# path flow name node:
+1:1 0.159448 "Mora moro" 16
+1:2 0.0314706 "Tmp526" 60
+1:3 0.0311262 "Etmopterus granulosus" 22
+1:4 0.0309918 "Tmp525" 59
+1:5 0.0257411 "Tmp427" 57
+1:6 0.0206595 "Nordet.StPaul.122" 46
+1:7 0.0199931 "Tmp428" 58
+1:8 0.0178827 "Jean.Luc12" 39
+1:9 0.0162999 "Nordet.StPaul.19" 51
+1:10 0.0151614 "Nordet.Amsterdam3" 43
+1:11 0.0150781 "Jean.Luc21" 40
+1:12 0.0129585 "Nordet.Amsterdam2" 42
+1:13 0.0103298 "16.Milles19" 31
+1:14 0.010036 "Etmopterus pusillus" 25
+1:15 0.00992711 "45.milles13" 33
+1:16 0.00460932 "Centroscymnus sp" 24
+1:17 0.00110669 "Neocyttus rhomboidalis" 18
+1:18 0.0010572 "Beryx splendens" 4
+1:19 0.000890413 "Coelorinchus sp1" 8
+1:20 0.000171237 "Hexanchus griseus" 11
+1:21 0.000111073 "Hydrolagus sp2" 5
+1:22 0.000109221 "Hydrolagus sp1" 6
+1:23 9.25605e-005 "Antimora rostrata" 1
+1:24 3.70242e-005 "Centroselachus crepidater" 23
+1:25 2.77681e-005 "Physiculus sp" 14
+1:26 1.85121e-005 "Coelorinchus sp2" 9
+2:1 0.143101 "Cirrhigaleus asper" 7
+2:2 0.0277404 "Nordet.StPaul.114" 44
+2:3 0.0256578 "StPaul24" 55
+2:4 0.0217332 "Nordet.StPaul.15" 48
+2:5 0.0145227 "Nordet.StPaul.115" 45
+2:6 0.0141803 "Nordet.StPaul.14" 47
+2:7 0.0131899 "StPaul16" 52
+2:8 0.012181 "Nordet.StPaul.16" 49
+2:9 0.0110517 "Nordet.StPaul.17" 50
+2:10 0.00716418 "StPaul17" 53
+3:1 0.0689891 "Hyperoglyphe antarctica" 12
+3:2 0.0221555 "Helicolenus mouchezi" 10
+3:3 0.0203818 "Amsterdam29" 34
+3:4 0.0152169 "Cap.Horn33" 38
+3:5 0.0133672 "Cap.Horn31" 36
+3:6 0.0131066 "Cap.Horn32" 37
+3:7 0.00797501 "Amsterdam30" 35
+3:8 0.00661993 "Nordet.Amsterdam1" 41
+3:9 0.00482601 "Bassanago nielseni" 2
+3:10 0.00228904 "Beryx decadactylus" 3
+3:11 0.000455967 "Schedophilus sp" 27
+3:12 0.000257318 "Pseudotriakis microdon" 21
+3:13 0.000148097 "Malacocephalus laevis" 15
+4:1 0.0365707 "Polyprion oxygeneios" 20
+4:2 0.0216221 "StPaul23" 54
+4:3 0.0108851 "16.Milles18" 30
+4:4 0.0101076 "Latris lineata" 13
+4:5 0.00816384 "16.Milles10" 28
+4:6 0.00408192 "StPaul8" 56
+4:7 0.00394308 "16.Milles20" 32
+4:8 0.00202736 "Polyprion americanus" 19
+4:9 0.000721972 "16.Milles11" 29
+4:10 0.000203633 "Nemadactylus monodactylus" 17
+4:11 2.77681e-005 "Tetronarce macneilli" 26
